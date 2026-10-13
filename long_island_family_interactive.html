@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Long Island, From Your Family's Point of View</title>
+<meta name="description" content="An interactive public explainer for young families living around Singapore's East Coast." />
+<style>
+  :root{
+    --ink:#10262a;
+    --muted:#61777b;
+    --paper:#f5f2e9;
+    --card:#ffffff;
+    --sea:#46a8c5;
+    --sea-dark:#15748f;
+    --sky:#dff4f4;
+    --land:#7bb67a;
+    --sand:#e9c990;
+    --coral:#ff785a;
+    --sun:#ffd95a;
+    --navy:#123b46;
+    --line:#d7e2df;
+    --good:#2d7b5a;
+    --future:#7456a8;
+    --warn:#a05d14;
+    --shadow:0 18px 50px rgba(16,38,42,.10);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 10% 10%, rgba(255,217,90,.18), transparent 26rem),
+      linear-gradient(180deg,#fbfaf5 0%,#f5f2e9 100%);
+    line-height:1.55;
+  }
+  button,input{font:inherit}
+  a{color:inherit}
+  .progress{
+    position:fixed;top:0;left:0;height:4px;width:0;background:var(--coral);z-index:99;
+    transition:width .08s linear
+  }
+  .nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(16px);
+    background:rgba(251,250,245,.88);
+    border-bottom:1px solid rgba(16,38,42,.08)
+  }
+  .nav-inner{
+    max-width:1180px;margin:auto;padding:14px 24px;
+    display:flex;align-items:center;gap:18px;justify-content:space-between
+  }
+  .brand{font-weight:900;letter-spacing:-.04em;font-size:1.1rem}
+  .brand span{color:var(--sea-dark)}
+  .nav-links{display:flex;gap:8px;flex-wrap:wrap}
+  .nav-links a{
+    text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:700;font-size:.86rem
+  }
+  .nav-links a:hover{background:#fff}
+
+  .wrap{max-width:1180px;margin:auto;padding:0 24px}
+  .hero{padding:72px 0 48px;min-height:82vh;display:grid;grid-template-columns:1.08fr .92fr;gap:42px;align-items:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:7px 11px;font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em
+  }
+  h1{
+    font-size:clamp(3.3rem,7.3vw,7.2rem);
+    line-height:.88;letter-spacing:-.075em;margin:18px 0 26px;max-width:900px
+  }
+  h1 .blue{color:var(--sea-dark)}
+  .hero-copy{font-size:clamp(1.08rem,1.8vw,1.35rem);max-width:680px;color:#30484d}
+  .hero-copy strong{color:var(--ink)}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:0;border-radius:999px;padding:13px 18px;cursor:pointer;font-weight:900;
+    background:var(--navy);color:#fff;box-shadow:0 8px 20px rgba(18,59,70,.14)
+  }
+  .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn:hover{transform:translateY(-1px)}
+  .hero-art{
+    position:relative;min-height:530px;border-radius:36px;overflow:hidden;
+    background:linear-gradient(#bde8ee 0 42%,#50afca 42% 72%,#1b7893 72% 100%);
+    box-shadow:var(--shadow);border:1px solid rgba(16,38,42,.08)
+  }
+  .sun{position:absolute;width:84px;height:84px;border-radius:50%;background:var(--sun);right:60px;top:54px}
+  .cloud{position:absolute;background:#fff;border-radius:999px;opacity:.78;height:28px}
+  .cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud:before{width:38px;height:38px;left:18px;top:-18px}
+  .cloud:after{width:50px;height:50px;left:48px;top:-28px}
+  .cloud.c1{width:110px;left:54px;top:88px}
+  .cloud.c2{width:92px;left:220px;top:145px;transform:scale(.75)}
+  .city{position:absolute;left:0;right:0;bottom:44%;height:126px;display:flex;align-items:flex-end;padding:0 24px;gap:7px}
+  .tower{background:#f9f5e9;border:2px solid rgba(16,38,42,.12);border-bottom:0;border-radius:4px 4px 0 0;position:relative}
+  .tower:after{content:"";position:absolute;inset:10px;background:repeating-linear-gradient(90deg,rgba(18,59,70,.18) 0 4px,transparent 4px 12px)}
+  .park{position:absolute;left:0;right:0;bottom:38%;height:62px;background:var(--land)}
+  .tree{position:absolute;width:30px;height:30px;border-radius:50%;background:#388b5f;bottom:35%}
+  .tree:after{content:"";position:absolute;width:6px;height:24px;background:#765a3b;left:12px;top:22px}
+  .tree.t1{left:12%}.tree.t2{left:27%;transform:scale(1.3)}.tree.t3{left:55%;transform:scale(.9)}.tree.t4{left:75%;transform:scale(1.2)}.tree.t5{left:88%;transform:scale(.8)}
+  .family{position:absolute;left:50%;bottom:33%;transform:translateX(-50%);display:flex;gap:5px;align-items:flex-end}
+  .person{width:12px;height:38px;background:var(--navy);border-radius:8px 8px 3px 3px;position:relative}
+  .person:before{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#d99567;left:-1.5px;top:-12px}
+  .person.small{height:26px;width:10px;background:var(--coral)}
+  .person.small:before{width:12px;height:12px;left:-1px;top:-9px}
+  .island-preview{
+    position:absolute;left:12%;right:7%;bottom:6%;height:74px;background:#5f9f69;
+    border-radius:50% 42% 36% 42% / 48% 55% 48% 52%;
+    border-top:12px solid var(--sand);transform:rotate(-2deg)
+  }
+  .island-preview:before{content:"CONCEPT, NOT FINAL SHAPE";position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:.66rem;font-weight:900;letter-spacing:.08em;color:#fff;white-space:nowrap}
+  .water-label{position:absolute;right:16px;bottom:25%;color:#fff;font-weight:900;font-size:.77rem;letter-spacing:.06em}
+
+  section{padding:82px 0}
+  .section-head{max-width:820px;margin-bottom:34px}
+  .kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.11em;font-weight:950;color:var(--sea-dark)}
+  h2{font-size:clamp(2.35rem,5vw,4.4rem);letter-spacing:-.055em;line-height:.98;margin:9px 0 16px}
+  .lead{font-size:1.16rem;color:var(--muted);max-width:760px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .info-card{
+    background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;
+    min-height:195px;box-shadow:0 10px 25px rgba(16,38,42,.05)
+  }
+  .icon{
+    width:48px;height:48px;border-radius:14px;background:#e7f5f4;
+    display:grid;place-items:center;font-size:1.55rem;margin-bottom:30px
+  }
+  .info-card h3{margin:0 0 8px;font-size:1.16rem}
+  .info-card p{margin:0;color:var(--muted);font-size:.93rem}
+  .metric{font-weight:950;font-size:1.8rem;letter-spacing:-.04em;color:var(--navy)}
+  .source-chip,.status{
+    display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:5px 8px;border-radius:999px;
+    font-weight:850;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase
+  }
+  .source-chip{background:#edf1ef;color:#516368}
+  .status.fact{background:#e7f4ed;color:var(--good)}
+  .status.future{background:#f0eafb;color:var(--future)}
+  .status.infer{background:#fff1df;color:var(--warn)}
+
+  .concern-shell{
+    background:var(--navy);color:#fff;border-radius:34px;padding:34px;box-shadow:var(--shadow)
+  }
+  .concern-top{display:flex;justify-content:space-between;gap:24px;align-items:end}
+  .concern-top p{margin:0;max-width:660px;color:#cde0e3}
+  .concern-chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+  .chip{
+    border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;
+    border-radius:999px;padding:10px 13px;cursor:pointer;font-weight:800
+  }
+  .chip.active{background:var(--sun);color:var(--ink);border-color:var(--sun)}
+  .concern-result{
+    margin-top:22px;background:#fff;color:var(--ink);border-radius:24px;padding:24px;
+    display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center
+  }
+  .concern-result h3{font-size:1.5rem;margin:0 0 6px}
+  .concern-result p{margin:0;color:var(--muted)}
+  .jump{white-space:nowrap;background:var(--coral);color:#fff;text-decoration:none;border-radius:999px;padding:11px 14px;font-weight:900}
+
+  .diagram-card{background:#fff;border:1px solid var(--line);border-radius:30px;padding:28px;box-shadow:var(--shadow)}
+  .toggle-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+  .seg{border:1px solid var(--line);background:#f6f7f4;border-radius:999px;padding:9px 13px;font-weight:850;cursor:pointer}
+  .seg.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .section-diagram{
+    position:relative;height:330px;overflow:hidden;border-radius:22px;
+    background:linear-gradient(#dff4f4 0 49%,#4ba9c4 49% 100%)
+  }
+  .diag-city{position:absolute;left:0;right:0;bottom:46%;height:85px;background:linear-gradient(90deg,#e7dfcd 0 42%,#efe8d7 42% 100%);clip-path:polygon(0 52%,4% 52%,4% 20%,8% 20%,8% 48%,13% 48%,13% 6%,19% 6%,19% 44%,25% 44%,25% 28%,30% 28%,30% 52%,100% 52%,100% 100%,0 100%)}
+  .diag-park{position:absolute;left:0;right:0;bottom:42%;height:38px;background:#75b877}
+  .diag-sea{position:absolute;left:0;right:0;bottom:0;height:42%;background:repeating-linear-gradient(0deg,#46a8c5 0 19px,#51b1cb 19px 38px)}
+  .diag-island{
+    position:absolute;right:-7%;bottom:6%;width:61%;height:88px;border-top:13px solid var(--sand);
+    background:#6caa70;border-radius:70% 20% 0 0;transform:translateY(150px);transition:transform .7s cubic-bezier(.2,.8,.2,1)
+  }
+  .diag-reservoir{position:absolute;left:32%;right:26%;bottom:11%;height:75px;background:rgba(86,177,201,.46);border:2px dashed rgba(255,255,255,.7);opacity:0;transition:opacity .5s}
+  .diagram-card.future-on .diag-island{transform:translateY(0)}
+  .diagram-card.future-on .diag-reservoir{opacity:1}
+  .diag-label{position:absolute;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.9);font-weight:900;font-size:.72rem}
+  .label-city{left:16px;top:18px}.label-park{left:16px;top:132px}.label-open{right:16px;bottom:16px}
+  .label-island{right:20%;bottom:62px;opacity:0;transition:opacity .4s}.future-on .label-island{opacity:1}
+  .label-reservoir{left:42%;bottom:76px;opacity:0;transition:opacity .4s}.future-on .label-reservoir{opacity:1}
+  .diagram-note{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:.88rem}
+  .diagram-note strong{color:var(--ink)}
+
+  .sea-lab{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px}
+  .slider-card,.risk-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px}
+  input[type=range]{width:100%;accent-color:var(--coral)}
+  .sea-meter{height:280px;position:relative;border-radius:20px;overflow:hidden;background:#dff4f4;margin-top:18px;border:1px solid #c7dfdf}
+  .sea-fill{position:absolute;left:0;right:0;bottom:0;height:18%;background:linear-gradient(#5ab4cb,#257f9b);transition:height .25s}
+  .sea-house{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);width:110px;height:88px;background:#fff3d9;border:2px solid var(--ink);transition:bottom .25s}
+  .sea-house:before{content:"";position:absolute;width:78px;height:78px;background:var(--coral);transform:rotate(45deg);left:14px;top:-42px;z-index:-1;border:2px solid var(--ink)}
+  .sea-house:after{content:"HOME";position:absolute;inset:0;display:grid;place-items:center;font-weight:950;font-size:.73rem}
+  .meter-value{font-size:3.2rem;font-weight:950;letter-spacing:-.06em;margin:6px 0}
+  .meter-value span{font-size:1.2rem}
+  .risk-card{display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#123b46,#174e5b);color:#fff}
+  .risk-card p{color:#cde0e3}
+  .big30{font-size:6.6rem;font-weight:950;letter-spacing:-.08em;line-height:.9;color:var(--sun)}
+  .smallnote{font-size:.78rem;color:#cde0e3}
+
+  .family-tabs{display:grid;grid-template-columns:290px 1fr;gap:18px}
+  .tab-list{display:flex;flex-direction:column;gap:8px}
+  .tab{
+    border:1px solid var(--line);background:#fff;text-align:left;border-radius:18px;padding:15px;cursor:pointer;font-weight:900
+  }
+  .tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .tab-panel{background:#fff;border:1px solid var(--line);border-radius:28px;padding:28px;min-height:430px}
+  .answer-title{font-size:2rem;letter-spacing:-.04em;margin:0 0 12px}
+  .answer-big{font-size:1.17rem;color:#30484d;max-width:770px}
+  .know-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+  .know-box{border:1px solid var(--line);border-radius:18px;padding:17px}
+  .know-box h4{margin:0 0 9px}.know-box p{margin:0;color:var(--muted)}
+  .family-visual{
+    margin-top:20px;border-radius:20px;padding:18px;background:#f0f7f6;display:flex;gap:12px;align-items:center
+  }
+  .family-visual .bubble{font-size:2rem}
+
+  .quiz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .quiz{
+    position:relative;min-height:220px;border:1px solid var(--line);background:#fff;border-radius:24px;padding:22px;
+    cursor:pointer;overflow:hidden;transition:transform .2s
+  }
+  .quiz:hover{transform:translateY(-2px)}
+  .quiz .q{font-size:1.3rem;font-weight:900;max-width:80%}
+  .quiz .reveal{position:absolute;inset:0;padding:22px;background:var(--navy);color:#fff;transform:translateY(101%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .quiz.revealed .reveal{transform:translateY(0)}
+  .quiz .reveal p{color:#d7e9eb}
+  .tap{position:absolute;right:18px;bottom:18px;font-size:.72rem;font-weight:900;color:var(--sea-dark)}
+
+  .timeline{position:relative;margin-top:30px}
+  .timeline:before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:3px;background:#c9d9d7}
+  .time-row{position:relative;padding-left:60px;margin:0 0 26px}
+  .dot{position:absolute;left:8px;top:4px;width:25px;height:25px;border-radius:50%;background:var(--coral);border:5px solid #fff;box-shadow:0 0 0 2px var(--coral)}
+  .time-row h3{margin:0 0 4px}.time-row p{margin:0;color:var(--muted)}
+  .time-tag{font-weight:950;color:var(--sea-dark);font-size:.82rem;letter-spacing:.06em}
+
+  .priority-shell{background:#fff;border:1px solid var(--line);border-radius:30px;padding:28px}
+  .priority-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .priority-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .priority{
+    border:1px solid var(--line);background:#f8f9f6;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font-weight:850
+  }
+  .priority.selected{background:#e7f5f4;border-color:#7fc2c9;box-shadow:inset 0 0 0 2px #7fc2c9}
+  .family-summary{background:#f4f1e8;border-radius:22px;padding:22px}
+  .family-summary h3{margin-top:0}
+  .summary-text{min-height:145px;color:#334a4f}
+  .privacy{font-size:.76rem;color:var(--muted)}
+
+  .sources{background:#10262a;color:#fff}
+  .sources .lead{color:#c3d7d9}
+  .source-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .source-item{border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:16px;background:rgba(255,255,255,.04)}
+  .source-item a{color:#fff;font-weight:900}
+  .source-item p{margin:5px 0 0;color:#bcd1d4;font-size:.86rem}
+  .transparency{
+    margin-top:28px;border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:20px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px
+  }
+  .transparency div{padding:14px;border-radius:16px;background:rgba(255,255,255,.04)}
+  .transparency h4{margin:0 0 6px}.transparency p{margin:0;color:#bdd1d4;font-size:.86rem}
+  footer{padding:26px 0;color:#8fa7aa;font-size:.8rem}
+
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translate(-50%,90px);
+    background:#10262a;color:#fff;border-radius:999px;padding:10px 15px;font-weight:850;z-index:100;
+    transition:transform .3s
+  }
+  .toast.show{transform:translate(-50%,0)}
+
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;min-height:auto;padding-top:52px}
+    .hero-art{min-height:420px}
+    .grid4{grid-template-columns:1fr 1fr}
+    .sea-lab,.family-tabs,.priority-grid{grid-template-columns:1fr}
+    .tab-list{display:grid;grid-template-columns:1fr 1fr}
+    .source-list{grid-template-columns:1fr}
+  }
+  @media(max-width:620px){
+    .wrap{padding:0 16px}
+    .nav-inner{padding:12px 16px}
+    .nav-links{display:none}
+    h1{font-size:3.45rem}
+    section{padding:60px 0}
+    .grid4,.quiz-grid,.know-grid,.priority-options,.transparency{grid-template-columns:1fr}
+    .concern-result{grid-template-columns:1fr}
+    .tab-list{grid-template-columns:1fr}
+    .hero-art{min-height:360px}
+    .diagram-card{padding:16px}
+    .section-diagram{height:280px}
+    .priority-shell{padding:18px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <div class="brand">LONG <span>ISLAND</span> / FAMILY VIEW</div>
+    <div class="nav-links">
+      <a href="#what">30-sec version</a>
+      <a href="#changes">What changes?</a>
+      <a href="#family">For my family</a>
+      <a href="#factfuture">Fact vs future</a>
+      <a href="#sources">Sources</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Public explainer · East Coast family lens</div>
+        <h1>Long Island,<br><span class="blue">from your family's</span><br>point of view.</h1>
+        <p class="hero-copy">
+          You live near East Coast. Your weekends might mean cycling, playgrounds, picnics, the beach, or just makan after a walk.
+          Then someone says Singapore may build <strong>“Long Island”</strong> offshore. What actually changes for you?
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="#concerns">Start with my concern</a>
+          <a class="btn secondary" href="#what">Give me the 30-second version</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Conceptual illustration showing the city, East Coast Park, sea and a future offshore landform.">
+        <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+        <div class="city">
+          <div class="tower" style="width:46px;height:86px"></div>
+          <div class="tower" style="width:55px;height:112px"></div>
+          <div class="tower" style="width:40px;height:73px"></div>
+          <div class="tower" style="width:58px;height:96px"></div>
+          <div class="tower" style="width:48px;height:65px"></div>
+          <div class="tower" style="width:62px;height:119px"></div>
+        </div>
+        <div class="park"></div>
+        <div class="tree t1"></div><div class="tree t2"></div><div class="tree t3"></div><div class="tree t4"></div><div class="tree t5"></div>
+        <div class="family"><div class="person"></div><div class="person small"></div><div class="person"></div></div>
+        <div class="island-preview"></div>
+        <div class="water-label">EXISTING COAST → FUTURE RESERVOIR → OPEN SEA</div>
+      </div>
+    </header>
+  </div>
+
+  <section id="concerns">
+    <div class="wrap">
+      <div class="concern-shell">
+        <div class="concern-top">
+          <div>
+            <div class="kicker" style="color:#8ed4df">Start where you care</div>
+            <h2 style="margin-bottom:10px">What are you actually worried about?</h2>
+            <p>Choose one. The page will point you to the most relevant answer first.</p>
+          </div>
+        </div>
+        <div class="concern-chips" role="group" aria-label="Family concerns">
+          <button class="chip active" data-concern="home">Will my home be safer?</button>
+          <button class="chip" data-concern="park">Will East Coast Park disappear?</button>
+          <button class="chip" data-concern="kids">What can my kids still do?</button>
+          <button class="chip" data-concern="works">Will works disrupt our weekends?</button>
+          <button class="chip" data-concern="nature">What happens to nature?</button>
+        </div>
+        <div class="concern-result" id="concernResult">
+          <div>
+            <h3>Yes, protection is the project's core purpose.</h3>
+            <p>Long Island is being studied as a continuous coastal defence for the low-lying East Coast, with a new reservoir adding flood and water resilience.</p>
+          </div>
+          <a class="jump" href="#family">See the family answer ↓</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">The 30-second version</div>
+        <h2>It is not just “Singapore making another island”.</h2>
+        <p class="lead">The official concept combines coastal protection, a new reservoir, future land and new waterfront opportunities.</p>
+      </div>
+      <div class="grid4">
+        <article class="info-card">
+          <div class="icon">↥</div>
+          <div class="metric">~800 ha</div>
+          <h3>Higher reclaimed land</h3>
+          <p>Land off East Coast would form a continuous line of defence against rising seas.</p>
+          <span class="status fact">Confirmed concept</span>
+        </article>
+        <article class="info-card">
+          <div class="icon">≋</div>
+          <div class="metric">1 reservoir</div>
+          <h3>New water body</h3>
+          <p>Water between the existing coast and future reclaimed land is planned as a new reservoir.</p>
+          <span class="status fact">Confirmed concept</span>
+        </article>
+        <article class="info-card">
+          <div class="icon">⇣</div>
+          <div class="metric">12 + 2</div>
+          <h3>Drains + barrages</h3>
+          <p>12 existing outlet drains would feed the reservoir, supported by 2 barrages and pumping stations.</p>
+          <span class="status fact">Confirmed concept</span>
+        </article>
+        <article class="info-card">
+          <div class="icon">☼</div>
+          <div class="metric">~20 km</div>
+          <h3>New waterfront parks</h3>
+          <p>URA says Long Island could add around 20 km of new waterfront parks.</p>
+          <span class="status future">Opportunity, details open</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="changes">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">See the spatial idea</div>
+        <h2>What could sit between East Coast Park and the open sea?</h2>
+        <p class="lead">Toggle the diagram. This is an explanatory section, not an official final plan or coastline.</p>
+      </div>
+
+      <div class="diagram-card" id="diagramCard">
+        <div class="toggle-row" role="group" aria-label="Current and future concept">
+          <button class="seg active" id="todayBtn">Today</button>
+          <button class="seg" id="futureBtn">Long Island concept</button>
+        </div>
+        <div class="section-diagram">
+          <div class="diag-city"></div>
+          <div class="diag-park"></div>
+          <div class="diag-sea"></div>
+          <div class="diag-reservoir"></div>
+          <div class="diag-island"></div>
+          <span class="diag-label label-city">Homes / city</span>
+          <span class="diag-label label-park">East Coast Park</span>
+          <span class="diag-label label-open">Open sea</span>
+          <span class="diag-label label-island">Future reclaimed land</span>
+          <span class="diag-label label-reservoir">New reservoir</span>
+        </div>
+        <div class="diagram-note">
+          <span><strong>Today:</strong> East Coast Park meets the sea directly.</span>
+          <span><strong>Future concept:</strong> a new reservoir could sit between the existing coast and reclaimed land.</span>
+          <span class="status future">Explanatory diagram · not final design</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Why are we talking about this now?</div>
+        <h2>Sea-level rise is a slow problem with a very long construction lead time.</h2>
+      </div>
+      <div class="sea-lab">
+        <div class="slider-card">
+          <div class="kicker">Interactive sea-level lens</div>
+          <div class="meter-value"><span id="seaValue">0.00</span> <span>m</span></div>
+          <p style="color:var(--muted);margin-top:0">Move the slider from today's reference to the high-end 2100 projection.</p>
+          <input id="seaSlider" type="range" min="0" max="115" value="0" aria-label="Sea level rise from zero to 1.15 metres">
+          <div class="sea-meter">
+            <div class="sea-fill" id="seaFill"></div>
+            <div class="sea-house" id="seaHouse"></div>
+          </div>
+          <p class="smallnote" style="color:var(--muted);margin-bottom:0">Illustrative visual only. It does not model a specific East Coast property or flood event.</p>
+        </div>
+        <div class="risk-card">
+          <div>
+            <div class="kicker" style="color:#8ed4df">Singapore's exposure</div>
+            <div class="big30">30%</div>
+            <h3 style="font-size:1.7rem;margin:8px 0">of Singapore is less than 5 m above mean sea level.</h3>
+            <p>Official climate projections put mean sea-level rise at about 0.23–1.15 m by 2100, depending on emissions.</p>
+          </div>
+          <span class="source-chip" style="background:rgba(255,255,255,.1);color:#d3e4e6">MSE / CCRS V3</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="family">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">The family lens</div>
+        <h2>“What does this mean for us?”</h2>
+        <p class="lead">These are the questions a young East Coast family is likely to care about. Where a point is inferred from public feedback rather than stated as an official family-specific concern, it is labelled accordingly.</p>
+      </div>
+
+      <div class="family-tabs">
+        <div class="tab-list" role="tablist">
+          <button class="tab active" data-tab="safety" role="tab">🏠 Home & safety</button>
+          <button class="tab" data-tab="weekend" role="tab">🚲 Weekend life</button>
+          <button class="tab" data-tab="water" role="tab">🌊 Beach & water</button>
+          <button class="tab" data-tab="works" role="tab">🚧 Construction</button>
+          <button class="tab" data-tab="nature" role="tab">🐚 Nature</button>
+        </div>
+
+        <div class="tab-panel" id="tabPanel" role="tabpanel">
+          <span class="status fact">Core project purpose</span>
+          <h3 class="answer-title">The main promise is protection, not a new lifestyle district.</h3>
+          <p class="answer-big">Long Island is first and foremost a coastal-protection strategy for the low-lying East Coast. The new reservoir and pumping system would also strengthen flood resilience.</p>
+          <div class="know-grid">
+            <div class="know-box">
+              <h4>What we know</h4>
+              <p>Protection from sea-level rise is a confirmed purpose of the project. The concept includes higher reclaimed land, a reservoir, barrages and pumping stations.</p>
+            </div>
+            <div class="know-box">
+              <h4>What we do not know yet</h4>
+              <p>The project does not tell you the flood risk or property outcome for a specific home. Detailed design and reclamation profile are still being studied.</p>
+            </div>
+          </div>
+          <div class="family-visual"><span class="bubble">👨‍👩‍👧</span><span><strong>Family takeaway:</strong> This is a decades-long protection project. It is not a guarantee about any single building, but it is intended to reduce coastal risk across the East Coast.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="factfuture">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Fact or future?</div>
+        <h2>Tap a card before you assume it is decided.</h2>
+        <p class="lead">A major part of this workshop is transparency: separate what official sources confirm from what is still an aspiration, option or unresolved design question.</p>
+      </div>
+
+      <div class="quiz-grid">
+        <article class="quiz" tabindex="0">
+          <div class="q">“Long Island starts full reclamation in 2026.”</div>
+          <span class="tap">TAP TO CHECK</span>
+          <div class="reveal">
+            <span class="status future" style="background:#fff;color:var(--future)">Not correct</span>
+            <h3>Preparatory works start from end-2026.</h3>
+            <p>Main reclamation will come later, after technical studies, mitigation measures and further public feedback.</p>
+          </div>
+        </article>
+        <article class="quiz" tabindex="0">
+          <div class="q">“The final shape we see today is confirmed.”</div>
+          <span class="tap">TAP TO CHECK</span>
+          <div class="reveal">
+            <span class="status future" style="background:#fff;color:var(--future)">Still open</span>
+            <h3>The reclamation profile is not final.</h3>
+            <p>URA says preparatory work areas do not represent the future land profile. Detailed planning continues.</p>
+          </div>
+        </article>
+        <article class="quiz" tabindex="0">
+          <div class="q">“East Coast Park users want recreation to remain important.”</div>
+          <span class="tap">TAP TO CHECK</span>
+          <div class="reveal">
+            <span class="status fact" style="background:#fff;color:var(--good)">Supported by engagement</span>
+            <h3>Yes.</h3>
+            <p>Public feedback emphasised preserving East Coast Park's recreational character, maintaining water activities and creating accessible green and blue spaces.</p>
+          </div>
+        </article>
+        <article class="quiz" tabindex="0">
+          <div class="q">“Future swimming, beaches and kids' facilities are guaranteed.”</div>
+          <span class="tap">TAP TO CHECK</span>
+          <div class="reveal">
+            <span class="status future" style="background:#fff;color:var(--future)">No</span>
+            <h3>Those details are not final.</h3>
+            <p>Beaches, bio-revetments and reservoir recreation have been suggested or are being explored. Exact programmes remain subject to studies and engagement.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Not next year. Not one construction phase.</div>
+        <h2>Think in decades.</h2>
+      </div>
+      <div class="timeline">
+        <div class="time-row">
+          <span class="dot"></span><div class="time-tag">2024 onward</div>
+          <h3>Technical studies + public engagement</h3>
+          <p>Agencies study engineering, environment, nature-based approaches and public aspirations.</p>
+        </div>
+        <div class="time-row">
+          <span class="dot"></span><div class="time-tag">2025</div>
+          <h3>Concept shown in planning conversations</h3>
+          <p>Long Island appears in Draft Master Plan 2025 discussions while the design remains conceptual.</p>
+        </div>
+        <div class="time-row">
+          <span class="dot"></span><div class="time-tag">End-2026</div>
+          <h3>Preparatory works begin offshore</h3>
+          <p>Seabed obstruction removal, temporary sand bunds and sand infilling are planned progressively. This does not equal the final reclamation shape.</p>
+        </div>
+        <div class="time-row">
+          <span class="dot"></span><div class="time-tag">After further studies</div>
+          <h3>Main reclamation later</h3>
+          <p>Reclamation begins only after relevant studies, mitigation measures and additional public feedback are taken into account.</p>
+        </div>
+        <div class="time-row">
+          <span class="dot"></span><div class="time-tag">Next few decades</div>
+          <h3>Long-term implementation</h3>
+          <p>URA describes Long Island as a project that will span a few decades.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="priority">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Make the planning question personal</div>
+        <h2>What should Long Island protect besides the coastline?</h2>
+        <p class="lead">Pick up to three priorities. This is a local reflection tool only. It does not submit feedback to URA.</p>
+      </div>
+      <div class="priority-shell">
+        <div class="priority-grid">
+          <div class="priority-options">
+            <button class="priority" data-p="East Coast Park's relaxed recreational character">🌳 Keep the East Coast Park feeling</button>
+            <button class="priority" data-p="safe cycling and walking for children">🚲 Safe family cycling & walking</button>
+            <button class="priority" data-p="easy access to water activities">🏄 Access to water activities</button>
+            <button class="priority" data-p="habitats for marine and intertidal life">🐚 Marine & intertidal habitats</button>
+            <button class="priority" data-p="inclusive play and recreation for different ages and abilities">🛝 Inclusive play & recreation</button>
+            <button class="priority" data-p="minimal disruption while works are underway">🚧 Minimise construction disruption</button>
+            <button class="priority" data-p="more shade, trees and comfortable outdoor spaces">🌴 Shade, trees & comfort</button>
+            <button class="priority" data-p="future homes balanced with generous green space">🏘️ Homes + green space</button>
+          </div>
+          <div class="family-summary">
+            <h3>Your family brief</h3>
+            <div class="summary-text" id="summaryText">Choose up to three things your family would want future planners to protect or prioritise.</div>
+            <button class="btn secondary" id="copyBtn" type="button">Copy my priorities</button>
+            <p class="privacy">Nothing is sent anywhere. Selections are stored only in this browser so you can continue exploring.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sources" id="sources">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker" style="color:#8ed4df">Evidence + transparency</div>
+        <h2>What is official, what is interpreted, what is imagined.</h2>
+        <p class="lead">The factual backbone uses official Singapore planning, water and climate sources. Family-focused questions are a communication lens built from public-engagement themes, not an official “young family” policy document.</p>
+      </div>
+
+      <div class="source-list">
+        <div class="source-item">
+          <a href="https://www.ura.gov.sg/land-planning/planning-strategies/urban-resilience/long-island/" target="_blank" rel="noopener">URA · Long Island overview ↗</a>
+          <p>Project purpose, ~800 ha, reservoir, ~20 km waterfront parks, public engagement themes and long-term planning.</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.ura.gov.sg/news/media/pr26-50/" target="_blank" rel="noopener">URA · Preparatory works, 30 Jun 2026 ↗</a>
+          <p>End-2026 preparatory works, environmental mitigation, ongoing design, main reclamation later.</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.pub.gov.sg/Resources/News-Room/PressReleases/2025/03/Urgency-to-Strengthen-Coastal-Defences" target="_blank" rel="noopener">PUB · Coastal defence explanation ↗</a>
+          <p>12 outlet drains, new reservoir, 2 barrages and pumping stations.</p>
+        </div>
+        <div class="source-item">
+          <a href="https://www.mse.gov.sg/policies/climate-change/about-climate-change/" target="_blank" rel="noopener">MSE · Climate change & sea-level rise ↗</a>
+          <p>30% of Singapore below 5 m above mean sea level and 0.23–1.15 m mean sea-level rise by 2100.</p>
+        </div>
+      </div>
+
+      <div class="transparency">
+        <div>
+          <h4><span class="status fact">Fact</span></h4>
+          <p>Directly supported by current official sources, such as the project's purposes, approximate land area, reservoir concept and coastal-protection system.</p>
+        </div>
+        <div>
+          <h4><span class="status future">Future / open</span></h4>
+          <p>Concepts, opportunities or details that are still being studied, such as exact coastline shape, specific recreation programmes and detailed development.</p>
+        </div>
+        <div>
+          <h4><span class="status infer">Family lens</span></h4>
+          <p>Questions inferred from the needs of young East Coast households and aligned with engagement themes such as recreation, water access, inclusivity, nature and disruption.</p>
+        </div>
+      </div>
+
+      <footer>
+        Workshop prototype · Interactive public-facing explainer. This page does not represent URA, PUB, MSE or any final Long Island design.
+      </footer>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+  const concernData = {
+    home:{
+      title:"Yes, protection is the project's core purpose.",
+      body:"Long Island is being studied as a continuous coastal defence for the low-lying East Coast, with a new reservoir adding flood and water resilience."
+    },
+    park:{
+      title:"The current concept does not say East Coast Park disappears.",
+      body:"Public engagement strongly emphasised preserving East Coast Park's recreational character. Exactly how the existing park connects to the future reservoir and reclaimed land is still being refined."
+    },
+    kids:{
+      title:"Family recreation is an opportunity, not a finished programme.",
+      body:"New waterfront parks are part of the concept, and people have asked for accessible recreation and continued water activities. Exact playgrounds, beaches, swimming or sports facilities are not yet confirmed."
+    },
+    works:{
+      title:"Some disruption is possible, but works are being phased.",
+      body:"Preparatory works begin offshore from end-2026. Agencies say works will be progressive and include mitigation measures to reduce impacts on the environment and community."
+    },
+    nature:{
+      title:"Nature is part of the planning discussion, not an afterthought.",
+      body:"Public feedback asked for marine habitats, intertidal areas and nature-based solutions. Environmental studies and mitigation measures will inform later design decisions."
+    }
+  };
+
+  document.querySelectorAll(".chip").forEach(chip=>{
+    chip.addEventListener("click",()=>{
+      document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+      chip.classList.add("active");
+      const d=concernData[chip.dataset.concern];
+      document.getElementById("concernResult").querySelector("h3").textContent=d.title;
+      document.getElementById("concernResult").querySelector("p").textContent=d.body;
+    });
+  });
+
+  const diagram=document.getElementById("diagramCard");
+  const todayBtn=document.getElementById("todayBtn");
+  const futureBtn=document.getElementById("futureBtn");
+  function setDiagram(future){
+    diagram.classList.toggle("future-on",future);
+    todayBtn.classList.toggle("active",!future);
+    futureBtn.classList.toggle("active",future);
+  }
+  todayBtn.addEventListener("click",()=>setDiagram(false));
+  futureBtn.addEventListener("click",()=>setDiagram(true));
+
+  const slider=document.getElementById("seaSlider");
+  const seaValue=document.getElementById("seaValue");
+  const seaFill=document.getElementById("seaFill");
+  function updateSea(){
+    const m=Number(slider.value)/100;
+    seaValue.textContent=m.toFixed(2);
+    const pct=18+(Number(slider.value)/115)*48;
+    seaFill.style.height=pct+"%";
+  }
+  slider.addEventListener("input",updateSea);
+  updateSea();
+
+  const tabData={
+    safety:{
+      status:'<span class="status fact">Core project purpose</span>',
+      title:"The main promise is protection, not a new lifestyle district.",
+      big:"Long Island is first and foremost a coastal-protection strategy for the low-lying East Coast. The new reservoir and pumping system would also strengthen flood resilience.",
+      know:"Protection from sea-level rise is a confirmed purpose. The concept includes higher reclaimed land, a reservoir, barrages and pumping stations.",
+      unknown:"The project does not tell you the flood risk or property outcome for a specific home. Detailed design and reclamation profile are still being studied.",
+      take:"This is a decades-long protection project. It is not a guarantee about any single building, but it is intended to reduce coastal risk across the East Coast.",
+      emoji:"👨‍👩‍👧"
+    },
+    weekend:{
+      status:'<span class="status infer">Family lens + engagement evidence</span>',
+      title:"The planning challenge is to protect the coast without losing what people love about East Coast.",
+      big:"Public feedback has repeatedly emphasised keeping East Coast Park recreational, creating accessible green and blue spaces, and adding new recreation opportunities.",
+      know:"URA says around 20 km of new waterfront parks could be added. Engagement feedback includes preserving recreation, accessible spaces and water activities.",
+      unknown:"The exact park layout, cycling network, playgrounds, sports spaces and everyday experience are not final.",
+      take:"Think of recreation as a design priority being negotiated, not a finished brochure promise.",
+      emoji:"🚲"
+    },
+    water:{
+      status:'<span class="status future">Opportunity, details open</span>',
+      title:"The relationship with water may change quite dramatically.",
+      big:"Today East Coast Park faces the open sea. In the Long Island concept, a future reservoir would sit between the existing coast and the new reclaimed land.",
+      know:"A new reservoir is part of the official concept. People have asked to maintain water activities, and agencies are studying possible recreation within the future reservoir.",
+      unknown:"Specific beaches, swimming areas, water-sport zones and access points are not guaranteed yet.",
+      take:"Your child may still grow up with water at East Coast, but the type of water edge could be different from today's shoreline.",
+      emoji:"🌊"
+    },
+    works:{
+      status:'<span class="status fact">Works confirmed, impacts managed</span>',
+      title:"The project will be built progressively, not all at once.",
+      big:"Preparatory works are planned from end-2026 in waters off East Coast. Agencies say mitigation measures will be used and works phased to minimise impacts as far as possible.",
+      know:"Preparatory works include removing seabed obstructions, temporary sand bunds and sand infilling. Environmental management and monitoring measures are part of the programme.",
+      unknown:"Your exact day-to-day experience of noise, views, access changes or temporary closures will depend on later work packages and advisories.",
+      take:"For a family, the practical question is not 'will there be zero disruption?' but 'how will access, safety and recreation be managed during a project that spans decades?'",
+      emoji:"🚧"
+    },
+    nature:{
+      status:'<span class="status infer">Engagement priority + ongoing studies</span>',
+      title:"There is an explicit push to make coastal protection work with nature.",
+      big:"Engagement feedback includes marine life, intertidal habitats, sustainable design and nature-based approaches. Environmental studies are being used to shape mitigation.",
+      know:"Nature groups have been engaged. Ideas include habitats for marine life, beaches and bio-revetments, alongside environmental monitoring during preparatory works.",
+      unknown:"Which ecological strategies make it into the final coastline and how habitats perform over time are still open questions.",
+      take:"The strongest family-friendly coast is not only safe and fun. It also gives children a living shoreline to experience, if ecological ambitions survive the design process.",
+      emoji:"🐚"
+    }
+  };
+
+  const panel=document.getElementById("tabPanel");
+  document.querySelectorAll(".tab").forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      const d=tabData[tab.dataset.tab];
+      panel.innerHTML=`
+        ${d.status}
+        <h3 class="answer-title">${d.title}</h3>
+        <p class="answer-big">${d.big}</p>
+        <div class="know-grid">
+          <div class="know-box"><h4>What we know</h4><p>${d.know}</p></div>
+          <div class="know-box"><h4>What we do not know yet</h4><p>${d.unknown}</p></div>
+        </div>
+        <div class="family-visual"><span class="bubble">${d.emoji}</span><span><strong>Family takeaway:</strong> ${d.take}</span></div>`;
+    });
+  });
+
+  document.querySelectorAll(".quiz").forEach(card=>{
+    const toggle=()=>card.classList.toggle("revealed");
+    card.addEventListener("click",toggle);
+    card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});
+  });
+
+  let priorities=[];
+  const saved=localStorage.getItem("longIslandFamilyPriorities");
+  if(saved){try{priorities=JSON.parse(saved).slice(0,3)}catch(e){}}
+  const summary=document.getElementById("summaryText");
+
+  function renderPriorities(){
+    document.querySelectorAll(".priority").forEach(btn=>{
+      btn.classList.toggle("selected",priorities.includes(btn.dataset.p));
+    });
+    if(!priorities.length){
+      summary.textContent="Choose up to three things your family would want future planners to protect or prioritise.";
+    }else{
+      const list=priorities.map((p,i)=>`${i+1}. ${p}`).join("\n");
+      summary.innerHTML=`<strong>If we were planning Long Island for our family, we would prioritise:</strong><br><br>${list.replaceAll("\n","<br>")}<br><br><span style="color:var(--muted)">This is your own family brief, not an official submission.</span>`;
+    }
+    localStorage.setItem("longIslandFamilyPriorities",JSON.stringify(priorities));
+  }
+  document.querySelectorAll(".priority").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const p=btn.dataset.p;
+      if(priorities.includes(p)) priorities=priorities.filter(x=>x!==p);
+      else if(priorities.length<3) priorities.push(p);
+      else showToast("Choose up to 3 priorities");
+      renderPriorities();
+    });
+  });
+  renderPriorities();
+
+  document.getElementById("copyBtn").addEventListener("click",async()=>{
+    if(!priorities.length){showToast("Choose a priority first");return;}
+    const text="Our family priorities for Long Island:\n"+priorities.map((p,i)=>`${i+1}. ${p}`).join("\n");
+    try{await navigator.clipboard.writeText(text);showToast("Family brief copied");}
+    catch(e){showToast("Copy is unavailable in this browser");}
+  });
+
+  function showToast(msg){
+    const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),1800);
+  }
+
+  function updateProgress(){
+    const h=document.documentElement;
+    const max=h.scrollHeight-h.clientHeight;
+    document.getElementById("progress").style.width=(max?window.scrollY/max*100:0)+"%";
+  }
+  document.addEventListener("scroll",updateProgress,{passive:true});
+  updateProgress();
+</script>
+</body>
+</html>
